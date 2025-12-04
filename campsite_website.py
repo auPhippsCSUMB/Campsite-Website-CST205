@@ -16,18 +16,10 @@ payload = {
     'api_key': my_key,
     'q' : 'CA',
     'limit' : 5
+}
 
 # Configure API request
-<<<<<<< HEAD
-endpoint = "https://developer.nps.gov/api/v1/parks"
-HEADERS = {
-    'X-Api-Key':'5Ejw0mGYYPhdABAjwaOzlDFtQQ7IyJik1DldHmuu',
-    'q':'CA',
-    'limit':'1'
-    }
-=======
 endpoint = 'https://developer.nps.gov/api/v1/parks'
->>>>>>> 0450994d25918ae58e83d929ffdae13cc610e952
 
 try:
     r = requests.get(endpoint, params=payload)
@@ -38,16 +30,6 @@ try:
         print (parks['fullName'], parks['states'])
         
 
-<<<<<<< HEAD
-try: 
-    req = requests.get(endpoint,headers=HEADERS)
-    data = req.json()
-    # pprint(data)
-    pprint(data)
-    for parks in data["data"]:
-        pprint(parks['fullName'])
-=======
->>>>>>> 0450994d25918ae58e83d929ffdae13cc610e952
 except:
     print('please try again')
 
