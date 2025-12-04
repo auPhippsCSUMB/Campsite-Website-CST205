@@ -18,11 +18,6 @@ payload = {
     'limit' : 5
 
 # Configure API request
-endpoint = "https://developer.nps.gov/api/v1/alerts?"
-HEADERS = {
-    "X-Api-Key":"5Ejw0mGYYPhdABAjwaOzlDFtQQ7IyJik1DldHmuu"
-    }
-
 endpoint = 'https://developer.nps.gov/api/v1/parks'
 
 try:
