@@ -12,9 +12,11 @@ bootstrap = Bootstrap5(app)
 
 
 # Configure API request
-endpoint = "https://developer.nps.gov/api/v1/alerts?"
+endpoint = "https://developer.nps.gov/api/v1/parks"
 HEADERS = {
-    "X-Api-Key":"5Ejw0mGYYPhdABAjwaOzlDFtQQ7IyJik1DldHmuu"
+    'X-Api-Key':'5Ejw0mGYYPhdABAjwaOzlDFtQQ7IyJik1DldHmuu',
+    'q':'CA',
+    'limit':'1'
     }
 
 # Additional code would follow
@@ -22,7 +24,10 @@ HEADERS = {
 try: 
     req = requests.get(endpoint,headers=HEADERS)
     data = req.json()
+    # pprint(data)
     pprint(data)
+    for parks in data["data"]:
+        pprint(parks['fullName'])
 except:
     print('please try again')
 
