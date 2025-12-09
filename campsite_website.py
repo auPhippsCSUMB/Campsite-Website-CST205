@@ -39,6 +39,13 @@ class StateSearch(FlaskForm):
    stateSearch = StringField('Search by State', validators=[DataRequired()])
 
 
+
+#parkSearch form - User will be able to select desired park
+class Parks(FlaskForm):
+    parks = SelectField("Select a park", choices=[], validators=[DataRequired()])
+    submit = SubmitField('Search')
+
+
 #main page: should dynamically react to a user's selecting of states? or a user's searching of states(implemented with form)??
 @app.route('/')
 @app.route('/<state>')
@@ -52,3 +59,26 @@ def details():
 
     return render_template('example.html', )#example.html
 # testing: curly brace added?
+
+
+# gets the parks for selected state
+def get_parks(state):
+    my_key = 'HDF4Pw02rLOOv9EuM4rU8LMgjIXs2O7FzxdfVEaX'
+
+    payload = {
+        'api_key': my_key,
+        'stateCode' : state,
+        'limit' : 475
+    }
+
+    endpoint = 'https://developer.nps.gov/api/v1/parks'
+
+    try:
+        r = requests.get(endpoint, params=payload)
+        data = r.json()
+        return data.get('data')
+            
+    except:
+        print('please try again')
+        
+
