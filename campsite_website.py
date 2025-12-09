@@ -32,7 +32,23 @@ try:
 
 except:
     print('please try again')
+    
+
+#stateSearch form!  -  String field to enter a state? that string can then.. be used to filter some parks.
+class StateSearch(FlaskForm):
+   stateSearch = StringField('Search by State', validators=[DataRequired()])
 
 
+#main page: should dynamically react to a user's selecting of states? or a user's searching of states(implemented with form)??
+@app.route('/')
+@app.route('/<state>')
+def index():
+    return render_template('main.html', state = state)
 
+#details page: should display details about a single facility/national park.
+    #details: ammenities, fees/costs
+@app.route('/details')
+def details():
+
+    return render_template('example.html', )#example.html
 # testing: curly brace added?
