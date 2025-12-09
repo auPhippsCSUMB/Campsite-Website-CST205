@@ -1,4 +1,4 @@
-import requests, json
+import json
 from flask import Flask, render_template, flash, redirect
 from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
@@ -36,7 +36,59 @@ except:
 
 #stateSearch form!  -  String field to enter a state? that string can then.. be used to filter some parks.
 class StateSearch(FlaskForm):
-   stateSearch = StringField('Search by State', validators=[DataRequired()])
+   stateSearch = SelectField('Select a state', 
+            choices=[
+                ("AL", "Alabama"),
+                ("AK", "Alaska"),
+                ("AZ", "Arizona"),
+                ("AR", "Arkansas"),
+                ("CA", "California"),
+                ("CO", "Colorado"),
+                ("CT", "Connecticut"),
+                ("DE", "Delaware"),
+                ("FL", "Florida"),
+                ("GA", "Georgia"),
+                ("HI", "Hawaii"),
+                ("ID", "Idaho"),
+                ("IL", "Illinois"),
+                ("IN", "Indiana"),
+                ("IA", "Iowa"),
+                ("KS", "Kansas"),
+                ("KY", "Kentucky"),
+                ("LA", "Louisiana"),
+                ("ME", "Maine"),
+                ("MD", "Maryland"),
+                ("MA", "Massachusetts"),
+                ("MI", "Michigan"),
+                ("MN", "Minnesota"),
+                ("MS", "Mississippi"),
+                ("MO", "Missouri"),
+                ("MT", "Montana"),
+                ("NE", "Nebraska"),
+                ("NV", "Nevada"),
+                ("NH", "New Hampshire"),
+                ("NJ", "New Jersey"),
+                ("NM", "New Mexico"),
+                ("NY", "New York"),
+                ("NC", "North Carolina"),
+                ("ND", "North Dakota"),
+                ("OH", "Ohio"),
+                ("OK", "Oklahoma"),
+                ("OR", "Oregon"),
+                ("PA", "Pennsylvania"),
+                ("RI", "Rhode Island"),
+                ("SC", "South Carolina"),
+                ("SD", "South Dakota"),
+                ("TN", "Tennessee"),
+                ("TX", "Texas"),
+                ("UT", "Utah"),
+                ("VT", "Vermont"),
+                ("VA", "Virginia"),
+                ("WA", "Washington"),
+                ("WV", "West Virginia"),
+                ("WI", "Wisconsin"),
+                ("WY", "Wyoming")
+            ])
 
 
 #main page: should dynamically react to a user's selecting of states? or a user's searching of states(implemented with form)??
