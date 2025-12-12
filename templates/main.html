@@ -4,8 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    {{bootstrap.load_css()}}
 </head>
 <body>
-    
+    <div class="container mb-4">  
+      <div class="card mt-4">
+        <div class="card-body">
+          <h2 class="card-title">Search for a State</h2>
+          <form method="POST" action="/">
+            {{ form.csrf_token }}
+            {{ form.stateSearch.label }} 
+            {{ form.stateSearch }}
+            <input type="submit" value="Submit">
+          </form>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <div class = "text-center">
+        <img src = {{ pic }} class = "w-50"/>
+    </div>
+    {{bootstrap.load_js()}}
 </body>
 </html>
