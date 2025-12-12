@@ -23,25 +23,72 @@ endpoint = 'https://developer.nps.gov/api/v1/parks'
 try:
     r = requests.get(endpoint, params=payload)
     data = r.json()
-    # pprint(data)
-    
-    # for parks in data["data"]:
-        # print (parks['fullName'], parks['states'])
-        
-        
-
 except:
     print('please try again')
     
 #EITHER GOING TO CHANGE ALL THESE TO STATE ABBRV OR TRANLSATE THEM IN FOR API SOMEWHERE ELSE
 #WORKING WITH CALIFORNIA RN
+statesWithAbbr = {
+    "Alabama": "AL",
+    "Alaska": "AK",
+    "Arizona": "AZ",
+    "Arkansas": "AR",
+    "California": "CA",
+    "Colorado": "CO",
+    "Connecticut": "CT",
+    "Delaware": "DE",
+    "Florida": "FL",
+    "Georgia": "GA",
+    "Hawaii": "HI",
+    "Idaho": "ID",
+    "Illinois": "IL",
+    "Indiana": "IN",
+    "Iowa": "IA",
+    "Kansas": "KS",
+    "Kentucky": "KY",
+    "Louisiana": "LA",
+    "Maine": "ME",
+    "Maryland": "MD",
+    "Massachusetts": "MA",
+    "Michigan": "MI",
+    "Minnesota": "MN",
+    "Mississippi": "MS",
+    "Missouri": "MO",
+    "Montana": "MT",
+    "Nebraska": "NE",
+    "Nevada": "NV",
+    "New Hampshire": "NH",
+    "New Jersey": "NJ",
+    "New Mexico": "NM",
+    "New York": "NY",
+    "North Carolina": "NC",
+    "North Dakota": "ND",
+    "Ohio": "OH",
+    "Oklahoma": "OK",
+    "Oregon": "OR",
+    "Pennsylvania": "PA",
+    "Rhode Island": "RI",
+    "South Carolina": "SC",
+    "South Dakota": "SD",
+    "Tennessee": "TN",
+    "Texas": "TX",
+    "Utah": "UT",
+    "Vermont": "VT",
+    "Virginia": "VA",
+    "Washington": "WA",
+    "West Virginia": "WV",
+    "Wisconsin": "WI",
+    "Wyoming": "WY"
+}
+
+
 states = [
     "",
     "Alabama",
     "Alaska",
     "Arizona",
     "Arkansas",
-    "CA",
+    "California",
     "Colorado",
     "Connecticut",
     "Delaware",
@@ -87,8 +134,7 @@ states = [
     "West Virginia",
     "Wisconsin",
     "Wyoming"
-]
-                
+]          
 
 #stateSearch form!  -  String field to enter a state? that string can then.. be used to filter some parks.
 class StateSearch(FlaskForm):
@@ -113,8 +159,22 @@ def index():
     form = StateSearch()
     stateText = ""
     if form.validate_on_submit():
+
+        # payload = {
+        #     'api_key': my_key,
+        #     'q' : statesWithAbbr[form.stateSearch.data]
+        # }
+    
+        payload['q'] = statesWithAbbr[form.stateSearch.data]
+
+        try:
+            r = requests.get(endpoint, params=payload)
+            data = r.json()
+        except:
+            print('please try again')
+
         for parks in data["data"]:
-            if (parks['states'] == form.stateSearch.data):
+            if (parks['states'] == statesWithAbbr[form.stateSearch.data]):
                 stateText = stateText + parks['fullName'] + " "
 
     return render_template('main.html', form = form, stateText = stateText)
