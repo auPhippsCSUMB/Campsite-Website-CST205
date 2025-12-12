@@ -34,9 +34,69 @@ except:
     print('please try again')
     
 
+states = [
+    "",
+    "Alabama",
+    "Alaska",
+    "Arizona",
+    "Arkansas",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "Delaware",
+    "Florida",
+    "Georgia",
+    "Hawaii",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Iowa",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Maine",
+    "Maryland",
+    "Massachusetts",
+    "Michigan",
+    "Minnesota",
+    "Mississippi",
+    "Missouri",
+    "Montana",
+    "Nebraska",
+    "Nevada",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "New York",
+    "North Carolina",
+    "North Dakota",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Rhode Island",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Vermont",
+    "Virginia",
+    "Washington",
+    "West Virginia",
+    "Wisconsin",
+    "Wyoming"
+]
+                
+
 #stateSearch form!  -  String field to enter a state? that string can then.. be used to filter some parks.
 class StateSearch(FlaskForm):
-   stateSearch = StringField('Search by State', validators=[DataRequired()])
+   stateSearch = SelectField(
+    'Search by State',
+     choices=states,
+     validators=[DataRequired()],
+     default = ""
+     )
 
 
 
@@ -47,16 +107,21 @@ class Parks(FlaskForm):
 
 
 #main page: should dynamically react to a user's selecting of states? or a user's searching of states(implemented with form)??
-@app.route('/')
-@app.route('/<state>')
+@app.route('/', methods=('GET', 'POST'))
+# @app.route('/<state>')
 def index():
-    return render_template('main.html', state = state)
+    form = StateSearch()
+    stateText = ""
+    if form.validate_on_submit():
+        stateText = form.stateSearch.data
+    return render_template('main.html', form = form, stateText = stateText)
 
 #details page: should display details about a single facility/national park.
     #details: ammenities, fees/costs
 @app.route('/details')
 def details():
 
+<<<<<<< HEAD
     return render_template('example.html', )#example.html
 # testing: curly brace added?
 
@@ -82,3 +147,7 @@ def get_parks(state):
         print('please try again')
         
 
+=======
+    return render_template('example.html')#example.html
+# testing: curly brace added?
+>>>>>>> austin_branch
