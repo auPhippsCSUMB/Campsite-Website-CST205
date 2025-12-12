@@ -15,7 +15,6 @@ my_key = 'HDF4Pw02rLOOv9EuM4rU8LMgjIXs2O7FzxdfVEaX'
 payload = {
     'api_key': my_key,
     'q' : 'CA',
-    'limit' : 5
 }
 
 # Configure API request
@@ -26,21 +25,23 @@ try:
     data = r.json()
     # pprint(data)
     
-    for parks in data["data"]:
-        print (parks['fullName'], parks['states'])
+    # for parks in data["data"]:
+        # print (parks['fullName'], parks['states'])
+        
         
 
 except:
     print('please try again')
     
-
+#EITHER GOING TO CHANGE ALL THESE TO STATE ABBRV OR TRANLSATE THEM IN FOR API SOMEWHERE ELSE
+#WORKING WITH CALIFORNIA RN
 states = [
     "",
     "Alabama",
     "Alaska",
     "Arizona",
     "Arkansas",
-    "California",
+    "CA",
     "Colorado",
     "Connecticut",
     "Delaware",
@@ -108,12 +109,14 @@ class Parks(FlaskForm):
 
 #main page: should dynamically react to a user's selecting of states? or a user's searching of states(implemented with form)??
 @app.route('/', methods=('GET', 'POST'))
-# @app.route('/<state>')
 def index():
     form = StateSearch()
     stateText = ""
     if form.validate_on_submit():
-        stateText = form.stateSearch.data
+        for parks in data["data"]:
+            if (parks['states'] == form.stateSearch.data):
+                stateText = stateText + parks['fullName'] + " "
+
     return render_template('main.html', form = form, stateText = stateText)
 
 #details page: should display details about a single facility/national park.
@@ -121,33 +124,5 @@ def index():
 @app.route('/details')
 def details():
 
-<<<<<<< HEAD
-    return render_template('example.html', )#example.html
-# testing: curly brace added?
-
-
-# gets the parks for selected state
-def get_parks(state):
-    my_key = 'HDF4Pw02rLOOv9EuM4rU8LMgjIXs2O7FzxdfVEaX'
-
-    payload = {
-        'api_key': my_key,
-        'stateCode' : state,
-        'limit' : 475
-    }
-
-    endpoint = 'https://developer.nps.gov/api/v1/parks'
-
-    try:
-        r = requests.get(endpoint, params=payload)
-        data = r.json()
-        return data.get('data')
-            
-    except:
-        print('please try again')
-        
-
-=======
     return render_template('example.html')#example.html
 # testing: curly brace added?
->>>>>>> austin_branch
