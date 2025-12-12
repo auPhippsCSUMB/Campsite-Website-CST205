@@ -24,7 +24,7 @@
     <div class = "text-center">
       <ul>
         {% for item in parkList %}
-          <li><h3>{{item}}</h3></li>
+          <a href = "{{url_for('details', park=item)}}"><li><h3>{{item}}</h3></li></a>
         {% endfor %}
       </ul>
     </div>

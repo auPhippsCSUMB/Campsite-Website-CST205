@@ -23,6 +23,7 @@ endpoint = 'https://developer.nps.gov/api/v1/parks'
 try:
     r = requests.get(endpoint, params=payload)
     data = r.json()
+    # pprint(data)
 except:
     print('please try again')
     
@@ -177,8 +178,7 @@ def index():
 
 #details page: should display details about a single facility/national park.
     #details: ammenities, fees/costs
-@app.route('/details')
-def details():
-
-    return render_template('example.html')#example.html
+@app.route('/details/<park>')
+def details(park):
+    return render_template('details.html', park = park)#example.html
 # testing: curly brace added?
