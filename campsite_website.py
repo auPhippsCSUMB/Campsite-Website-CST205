@@ -158,12 +158,8 @@ class Parks(FlaskForm):
 def index():
     form = StateSearch()
     stateText = ""
+    parkList = []
     if form.validate_on_submit():
-
-        # payload = {
-        #     'api_key': my_key,
-        #     'q' : statesWithAbbr[form.stateSearch.data]
-        # }
     
         payload['q'] = statesWithAbbr[form.stateSearch.data]
 
@@ -175,9 +171,9 @@ def index():
 
         for parks in data["data"]:
             if (parks['states'] == statesWithAbbr[form.stateSearch.data]):
-                stateText = stateText + parks['fullName'] + " "
+                parkList.append(parks['fullName'])
 
-    return render_template('main.html', form = form, stateText = stateText)
+    return render_template('main.html', form = form, parkList = parkList)
 
 #details page: should display details about a single facility/national park.
     #details: ammenities, fees/costs

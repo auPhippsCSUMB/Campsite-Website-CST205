@@ -22,7 +22,11 @@
     </div>
     <br/>
     <div class = "text-center">
-        <h2>{{stateText}}</h2>
+      <ul>
+        {% for item in parkList %}
+          <li><h3>{{item}}</h3></li>
+        {% endfor %}
+      </ul>
     </div>
     {{bootstrap.load_js()}}
 </body>
