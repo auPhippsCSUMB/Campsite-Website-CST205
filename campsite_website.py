@@ -12,20 +12,21 @@ bootstrap = Bootstrap5(app)
 
 my_key = 'HDF4Pw02rLOOv9EuM4rU8LMgjIXs2O7FzxdfVEaX'
 
+data = {}
+
 payload = {
     'api_key': my_key,
-    'q' : 'CA',
+    'q' : 'CA'
 }
 
 # Configure API request
 endpoint = 'https://developer.nps.gov/api/v1/parks'
 
-try:
-    r = requests.get(endpoint, params=payload)
-    data = r.json()
-    # pprint(data)
-except:
-    print('please try again')
+# try:
+#     r = requests.get(endpoint, params=payload)
+#     data = r.json()
+# except:
+#     print('please try again')
     
 #EITHER GOING TO CHANGE ALL THESE TO STATE ABBRV OR TRANLSATE THEM IN FOR API SOMEWHERE ELSE
 #WORKING WITH CALIFORNIA RN
@@ -160,6 +161,7 @@ def index():
     form = StateSearch()
     stateText = ""
     parkList = []
+    global data
     if form.validate_on_submit():
     
         payload['q'] = statesWithAbbr[form.stateSearch.data]
@@ -180,5 +182,12 @@ def index():
     #details: ammenities, fees/costs
 @app.route('/details/<park>')
 def details(park):
-    return render_template('details.html', park = park)#example.html
+    parkDesc = "No Description Provided"
+    print(payload['q'])
+    for parks in data["data"]:
+        # pprint(parks["fullName"])
+        if (parks['fullName'] == park):
+            parkDesc = parks['description']
+
+    return render_template('details.html', park = park, parkDesc = parkDesc)#example.html
 # testing: curly brace added?
