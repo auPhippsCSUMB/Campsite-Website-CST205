@@ -183,11 +183,16 @@ def index():
 @app.route('/details/<park>')
 def details(park):
     parkDesc = "No Description Provided"
-    print(payload['q'])
+
+    pictures = []
+
     for parks in data["data"]:
         # pprint(parks["fullName"])
         if (parks['fullName'] == park):
+            # pprint(parks)
             parkDesc = parks['description']
+            for img in parks['images']:
+                pprint(img['url'])
+                pictures.append(img['url'])
 
-    return render_template('details.html', park = park, parkDesc = parkDesc)#example.html
-# testing: curly brace added?
+    return render_template('details.html', park = park, parkDesc = parkDesc, pictures = pictures)
