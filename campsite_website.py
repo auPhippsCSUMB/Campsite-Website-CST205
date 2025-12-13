@@ -192,7 +192,8 @@ def details(park):
             # pprint(parks)
             parkDesc = parks['description']
             for img in parks['images']:
-                pprint(img['url'])
                 pictures.append(img['url'])
 
-    return render_template('details.html', park = park, parkDesc = parkDesc, pictures = pictures)
+    firstPic = pictures[0]
+    del pictures[0]
+    return render_template('details.html', park = park, parkDesc = parkDesc, pictures = pictures, firstPic = firstPic)
