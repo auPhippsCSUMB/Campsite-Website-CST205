@@ -194,6 +194,7 @@ def details(park):
             for img in parks['images']:
                 pictures.append(img['url'])
 
+    print(pictures)
     firstPic = pictures[0]
     del pictures[0]
     return render_template('details.html', park = park, parkDesc = parkDesc, pictures = pictures, firstPic = firstPic)

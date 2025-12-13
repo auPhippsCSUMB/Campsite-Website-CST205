@@ -5,19 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     {{bootstrap.load_css()}}
+    <style>
+        body {
+            background-color: antiquewhite;
+        }
+
+        .container-sm.pictures {
+            margin: 40px auto;
+            width: 960px;
+            height: 720px;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .carousel-item img {
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
-    <div class="container-sm">
+    <div class="container-sm pictures">
         <div id="picSlides" class = "carousel slide" data-bs-ride = "carousel">
             <div class = "carousel-inner">
-                <div class = "carousel-item active">
-                    <img src = "{{firstPic}}" class="d-block w-100" alt="firstpic">
+                <div class = "pictures">
+                    <div class = "carousel-item active">
+                        <img src = "{{firstPic}}" class="d-block w-100" alt="firstpic">
+                    </div>
+                    {% for pic in pictures %}
+                    <div class = "carousel-item">
+                        <img src = "{{pic}}" class="d-block w-100"  alt="pics" >
+                    </div>
+                    {% endfor %}
                 </div>
-                {% for pic in pictures %}
-                <div class = "carousel-item">
-                    <img src = "{{pic}}" class="d-block w-100"  alt="pics" >
-                </div>
-                {% endfor %}
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#picSlides" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
