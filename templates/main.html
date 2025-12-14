@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme = "">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container mb-4">  
-      <div class="card mt-4">
+      <div class="card mt-4 text-center">
         <div class="card-body">
           <h2 class="card-title">Search for a State</h2>
           <form method="POST" action="/">
@@ -22,6 +22,7 @@
     </div>
     <br/>
     <div class = "text-center">
+      <h2 class = "mb-3" >National Parks:</h2>
       <ul>
         {% for item in parkList %}
           <a href = "{{url_for('details', park=item)}}"><li><h3>{{item}}</h3></li></a>
