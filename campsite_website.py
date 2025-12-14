@@ -186,15 +186,45 @@ def details(park):
 
     pictures = []
 
+    hoursBool = False
+
     for parks in data["data"]:
         # pprint(parks["fullName"])
+
+        #grabs the info from the api based on the park name
         if (parks['fullName'] == park):
-            pprint(parks)
+            # pprint(parks)
+
+            #passes the park description
             parkDesc = parks['description']
+
+            #passes all the pictures associated with the park
             for img in parks['images']:
                 pictures.append(img['url'])
+
+            weatherInfo = parks['weatherInfo']
+
+            directionsInfo = parks['directionsInfo']
+
+            directionsUrl = parks['directionsUrl']
+
+            try:
+                hoursDesc = parks['operatingHours'][0]['description']
+                hoursBool = True
+            except:
+                hoursDesc = 'none'
+
 
     print(pictures)
     firstPic = pictures[0]
     del pictures[0]
-    return render_template('details.html', park = park, parkDesc = parkDesc, pictures = pictures, firstPic = firstPic)
+    return render_template('details.html',
+        park = park,
+        parkDesc = parkDesc,
+        pictures = pictures,
+        firstPic = firstPic,
+        weatherInfo = weatherInfo,
+        directionsInfo = directionsInfo,
+        directionsUrl = directionsUrl,
+        hoursDesc = hoursDesc,
+        hoursBool = hoursBool)
