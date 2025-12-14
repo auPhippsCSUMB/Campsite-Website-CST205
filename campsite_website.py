@@ -189,7 +189,7 @@ def details(park):
     for parks in data["data"]:
         # pprint(parks["fullName"])
         if (parks['fullName'] == park):
-            # pprint(parks)
+            pprint(parks)
             parkDesc = parks['description']
             for img in parks['images']:
                 pictures.append(img['url'])
