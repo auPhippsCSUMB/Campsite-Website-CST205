@@ -1,34 +1,113 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme = "dark">
+<html lang="en" data-bs-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    {{bootstrap.load_css()}}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>National Parks Search</title>
+
+  {{ bootstrap.load_css() }}
+
+  <style>
+    body {
+      /* Dark, gradient from the top */
+      background: linear-gradient(180deg, #0f2a1c 0%, #0b1220 55%, #0b1220 100%);
+    }
+
+    .page-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .brand-accent {
+      width: 56px;
+      height: 4px;
+      border-radius: 999px;
+      background: #4aa36f;
+      margin: 0.75rem auto 0;
+    }
+
+    .card {
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(6px);
+    }
+
+    .helper-text {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.95rem;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container mb-4">  
-      <div class="card mt-4 text-center">
-        <div class="card-body">
-          <h2 class="card-title">Search for a State</h2>
-          <form method="POST" action="/">
-            {{ form.csrf_token }}
-            {{ form.stateSearch.label }} 
-            {{ form.stateSearch }}
-            <input type="submit" value="Submit">
+  <div class="page-wrap">
+    <div class="container" style="max-width: 720px;">
+      <!-- Center card -->
+      <div class="card shadow-sm rounded-4">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center">
+            <h1 class="h3 mb-2">National Parks Finder</h1>
+            <p class="helper-text mb-0">Choose a state to see parks from the National Park Service.</p>
+            <div class="brand-accent"></div>
+          </div>
+
+          <hr class="my-4" />
+
+          <!-- Form -->
+          <form method="POST" action="/" class="row g-3 justify-content-center">
+            {{ form.hidden_tag() }}
+
+            <div class="col-12">
+              <label class="form-label" for="stateSearch">{{ form.stateSearch.label.text }}</label>
+              <div>
+                {{ form.stateSearch(class="form-select", id="stateSearch") }}
+              </div>
+            </div>
+
+            <div class="col-12 d-grid">
+              <button type="submit" class="btn btn-success btn-lg">Search</button>
+            </div>
           </form>
         </div>
       </div>
+
+      <!-- Results (shows after a search) -->
+      {% if request.method == 'POST' %}
+        <div class="mt-4">
+          <div class="card shadow-sm rounded-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <h2 class="h5 mb-0">Parks</h2>
+                {% if parkList %}
+                  <span class="text-body-secondary">{{ parkList|length }} result(s)</span>
+                {% endif %}
+              </div>
+
+              <hr class="my-3" />
+
+              {% if parkList %}
+                <div class="list-group">
+                  {% for item in parkList %}
+                    <a class="list-group-item list-group-item-action" href="{{ url_for('details', park=item) }}">
+                      {{ item }}
+                    </a>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="alert alert-secondary mb-0" role="alert">
+                  No parks found for that state.
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
     </div>
-    <br/>
-    <div class = "text-center">
-      <h2 class = "mb-3" >National Parks:</h2>
-      <ul>
-        {% for item in parkList %}
-          <a href = "{{url_for('details', park=item)}}"><li><h3>{{item}}</h3></li></a>
-        {% endfor %}
-      </ul>
-    </div>
-    {{bootstrap.load_js()}}
+  </div>
+
+  {{ bootstrap.load_js() }}
 </body>
 </html>
