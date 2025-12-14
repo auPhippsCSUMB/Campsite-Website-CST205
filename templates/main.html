@@ -18,17 +18,6 @@
             background-color: #333136 !important;
         }
 
-        .carousel-caption {
-            background-color: rgba(0, 0, 0, 0.4);
-            color: white;
-            position: absolute;
-            width: 100%;
-            height: fit-content;
-            justify-content: center;
-            top: 0;
-            left: 0;
-        }
-
     </style>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -49,7 +38,7 @@
 </head>
 <body class = "bg-light">
     <div class="container mb-4">  
-      <div class="card mt-4">
+      <div class="card mt-4 text-center">
         <div class="card-body">
           <h2 class="card-title">Search for a State</h2>
           <form method="POST" action="/">
@@ -62,6 +51,7 @@
       </div>
     </div>
     <br/>
+    <h2 class = "mb-3 text-center" >National Parks:</h2>
     <div class = "container-lg list-group text-center">
       {% for item in parkList %}
         <a href = "{{url_for('details', park=item)}}" class = "list-group-item list-group-item-action"><h3>{{item}}</h3></a>
