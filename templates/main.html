@@ -1,12 +1,53 @@
-<!DOCTYPE html>
+<!DOCTYPE html data-bs-theme = "light">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     {{bootstrap.load_css()}}
+
+    <style>
+      
+      .navbar-brand {
+            /* color: #6F4E37 !important; */
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .nav-link.active {
+            background-color: #333136 !important;
+        }
+
+        .carousel-caption {
+            background-color: rgba(0, 0, 0, 0.4);
+            color: white;
+            position: absolute;
+            width: 100%;
+            height: fit-content;
+            justify-content: center;
+            top: 0;
+            left: 0;
+        }
+
+    </style>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand">NPS Camping</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link active" aria-current="page" href="{{url_for('index')}}">Home</a>
+            <!-- <a class="nav-link">Park Details</a> -->
+          </div>
+        </div>
+      </div>
+    </nav>
+
 </head>
-<body>
+<body class = "bg-light">
     <div class="container mb-4">  
       <div class="card mt-4">
         <div class="card-body">
@@ -21,12 +62,10 @@
       </div>
     </div>
     <br/>
-    <div class = "text-center">
-      <ul>
-        {% for item in parkList %}
-          <a href = "{{url_for('details', park=item)}}"><li><h3>{{item}}</h3></li></a>
-        {% endfor %}
-      </ul>
+    <div class = "container-lg list-group text-center">
+      {% for item in parkList %}
+        <a href = "{{url_for('details', park=item)}}" class = "list-group-item list-group-item-action"><h3>{{item}}</h3></a>
+      {% endfor %}
     </div>
     {{bootstrap.load_js()}}
 </body>
