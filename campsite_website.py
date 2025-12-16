@@ -241,7 +241,10 @@ def details(park):
 
             weatherInfo = parks['weatherInfo']
 
-            directionsInfo = parks['directionsInfo']
+            if parks['directionsInfo'] is not "":
+                directionsInfo = parks['directionsInfo']
+            else:
+                directionsInfo = "No directions provided, please click link for more details!"
 
             directionsUrl = parks['directionsUrl']
 
