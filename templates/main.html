@@ -1,95 +1,195 @@
-<!DOCTYPE html data-bs-theme = "light">
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    {{bootstrap.load_css()}}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>National Parks Search</title>
 
-    <style>
-      
-      .navbar-brand {
-            /* color: #6F4E37 !important; */
-            font-weight: bold;
-            font-size: 24px;
-        }
+  {{ bootstrap.load_css() }}
 
-        .nav-link.active {
-            background-color: #333136 !important;
-        }
+  <!-- Leaflet (map) CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
 
-        img {
-            aspect-ratio: 30/9;
-            object-fit: cover;
-            justify-content: center;
-            align-items: center;
-            max-height: 40%;
-            width: 100%;
-            border-style: solid;
-            border-color: rgba(45, 56, 36, 0.9);
-        }
+  <style>
+    body {
+      /* Dark, gradient from the top */
+      background: linear-gradient(180deg, #0f2a1c 0%, #0b1220 55%, #0b1220 100%);
+    }
 
-        .carousel-caption {
-            background-color: rgba(0, 0, 0, 0.4);
-            color: white;
-            position: absolute;
-            width: 100%;
-            height: fit-content;
-            justify-content: center;
-            top: 0;
-            left: 0;
-        }
+    .page-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
 
-        /* .austin-div{
-          height: fit-content;
-        } */
+    .brand-accent {
+      width: 56px;
+      height: 4px;
+      border-radius: 999px;
+      background: #4aa36f;
+      margin: 0.75rem auto 0;
+    }
 
-    </style>
+    .card {
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(6px);
+    }
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand">NPS Camping</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <a class="nav-link active" aria-current="page" href="{{url_for('index')}}">Home</a>
-            <!-- <a class="nav-link">Park Details</a> -->
-          </div>
-        </div>
-      </div>
-    </nav>
+    .helper-text {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.95rem;
+    }
 
-    <div class = "austin-div">
-      <a href = "https://images.pexels.com/photos/144251/yosemite-national-park-landscape-california-144251.jpeg">
-        <img src = "https://images.pexels.com/photos/144251/yosemite-national-park-landscape-california-144251.jpeg" alt = "national park title image">
-      </a>
-      <!-- <h1 class = "carousel-caption">Welcome to NPS Camping!</h1> -->
-    </div>
-
+    #parks_map {
+      height: 380px;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+  </style>
 </head>
-<body class = "bg-light">
-    <div class="container mb-4">  
-      <div class="card mt-4 text-center">
-        <div class="card-body">
-          <h2 class="card-title">Search for a State</h2>
-          <form method="POST" action="/">
-            {{ form.csrf_token }}
-            {{ form.stateSearch.label }} 
-            {{ form.stateSearch }}
-            <input type="submit" value="Submit">
+
+<body>
+  <div class="page-wrap">
+    <div class="container" style="max-width: 720px;">
+      <!-- Center card -->
+      <div class="card shadow-sm rounded-4">
+        <div class="card-body p-4 p-md-5">
+          <div class="text-center">
+            <h1 class="h3 mb-2">National Parks Finder</h1>
+            <p class="helper-text mb-0">Choose a state to see parks from the National Park Service.</p>
+            <div class="brand-accent"></div>
+          </div>
+
+          <hr class="my-4" />
+
+          <!-- Form -->
+          <form method="POST" action="/" class="row g-3 justify-content-center">
+            {{ form.hidden_tag() }}
+
+            <div class="col-12">
+              <label class="form-label" for="stateSearch">{{ form.stateSearch.label.text }}</label>
+              <div>
+                {{ form.stateSearch(class="form-select", id="stateSearch") }}
+              </div>
+            </div>
+
+            <div class="col-12 d-grid">
+              <button type="submit" class="btn btn-success btn-lg">Search</button>
+            </div>
           </form>
         </div>
       </div>
+
+      <!-- Results (shows after a search) -->
+      {% if request.method == 'POST' %}
+        <div class="mt-4">
+          <div class="card shadow-sm rounded-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <h2 class="h5 mb-0">Parks</h2>
+                {% if parkList %}
+                  <span class="text-body-secondary">{{ parkList|length }} result(s)</span>
+                {% endif %}
+              </div>
+
+              <hr class="my-3" />
+
+              <!-- Map -->
+              <div class="mb-3">
+                <div id="parks_map"></div>
+              </div>
+
+              {% if parkList %}
+                <div class="list-group">
+                  {% for item in parkList %}
+                    <a class="list-group-item list-group-item-action" href="{{ url_for('details', park=item) }}">
+                      {{ item }}
+                    </a>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="alert alert-secondary mb-0" role="alert">
+                  No parks found for that state.
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
     </div>
-    <br/>
-    <h2 class = "mb-3 text-center" >National Parks:</h2>
-    <div class = "container-lg list-group text-center">
-      {% for item in parkList %}
-        <a href = "{{url_for('details', park=item)}}" class = "list-group-item list-group-item-action"><h3>{{item}}</h3></a>
-      {% endfor %}
-    </div>
-    {{bootstrap.load_js()}}
+  </div>
+
+  {% if parks_for_map is defined %}
+    <script id="parks-data" type="application/json">{{ parks_for_map | tojson }}</script>
+  {% else %}
+    <script id="parks-data" type="application/json">[]</script>
+  {% endif %}
+
+  <!-- Leaflet (map) JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <script>
+    // Renders markers for parks_for_map (list of {name, latitude, longitude}).
+    // If no coordinates are provided yet, the map still loads but won’t show markers.
+    (function () {
+      const mapEl = document.getElementById("parks_map");
+      if (!mapEl) return;
+
+      let parks = [];
+      try {
+        const jsonText = document.getElementById("parks-data")?.textContent || "[]";
+        parks = JSON.parse(jsonText);
+      } catch (err) {
+        parks = [];
+      }
+
+      const map = L.map("parks_map", {
+        scrollWheelZoom: false,
+      }).setView([39.5, -98.35], 4);
+
+      // Dark tile layer to match dark mode
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+        subdomains: "abcd",
+        maxZoom: 19,
+      }).addTo(map);
+
+      const markers = [];
+
+      parks.forEach((park) => {
+        const name = park.name || "Park";
+        const lat = Number(park.latitude);
+        const lng = Number(park.longitude);
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+        const marker = L.marker([lat, lng]).addTo(map);
+        marker.bindPopup(`<strong>${name}</strong>`);
+        markers.push(marker);
+      });
+
+      if (markers.length > 0) {
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.2));
+      }
+
+      // Fix sizing when inside a card (especially after the results appear)
+      setTimeout(() => map.invalidateSize(), 50);
+    })();
+  </script>
+
+  {{ bootstrap.load_js() }}
 </body>
 </html>
