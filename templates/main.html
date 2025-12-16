@@ -7,6 +7,14 @@
 
   {{ bootstrap.load_css() }}
 
+  <!-- Leaflet (map) CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
   <style>
     body {
       /* Dark, gradient from the top */
@@ -38,6 +46,12 @@
     .helper-text {
       color: rgba(255, 255, 255, 0.72);
       font-size: 0.95rem;
+    }
+
+    #parks_map {
+      height: 380px;
+      border-radius: 16px;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -88,6 +102,11 @@
 
               <hr class="my-3" />
 
+              <!-- Map -->
+              <div class="mb-3">
+                <div id="parks_map"></div>
+              </div>
+
               {% if parkList %}
                 <div class="list-group">
                   {% for item in parkList %}
@@ -107,6 +126,69 @@
       {% endif %}
     </div>
   </div>
+
+  {% if parks_for_map is defined %}
+    <script id="parks-data" type="application/json">{{ parks_for_map | tojson }}</script>
+  {% else %}
+    <script id="parks-data" type="application/json">[]</script>
+  {% endif %}
+
+  <!-- Leaflet (map) JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <script>
+    // Renders markers for parks_for_map (list of {name, latitude, longitude}).
+    // If no coordinates are provided yet, the map still loads but won’t show markers.
+    (function () {
+      const mapEl = document.getElementById("parks_map");
+      if (!mapEl) return;
+
+      let parks = [];
+      try {
+        const jsonText = document.getElementById("parks-data")?.textContent || "[]";
+        parks = JSON.parse(jsonText);
+      } catch (err) {
+        parks = [];
+      }
+
+      const map = L.map("parks_map", {
+        scrollWheelZoom: false,
+      }).setView([39.5, -98.35], 4);
+
+      // Dark tile layer to match dark mode
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+        subdomains: "abcd",
+        maxZoom: 19,
+      }).addTo(map);
+
+      const markers = [];
+
+      parks.forEach((park) => {
+        const name = park.name || "Park";
+        const lat = Number(park.latitude);
+        const lng = Number(park.longitude);
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+        const marker = L.marker([lat, lng]).addTo(map);
+        marker.bindPopup(`<strong>${name}</strong>`);
+        markers.push(marker);
+      });
+
+      if (markers.length > 0) {
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.2));
+      }
+
+      // Fix sizing when inside a card (especially after the results appear)
+      setTimeout(() => map.invalidateSize(), 50);
+    })();
+  </script>
 
   {{ bootstrap.load_js() }}
 </body>

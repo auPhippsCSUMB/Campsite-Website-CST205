@@ -1,4 +1,4 @@
-import requests, json
+import requests, json, re
 from flask import Flask, render_template, flash, redirect
 from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
@@ -13,6 +13,31 @@ bootstrap = Bootstrap5(app)
 my_key = 'HDF4Pw02rLOOv9EuM4rU8LMgjIXs2O7FzxdfVEaX'
 
 data = {}
+
+def extract_coords(park_dict):
+    """Return (lat, lng) as floats if available, otherwise (None, None)."""
+    #  NPS responses latitude/longitude.
+    lat_raw = park_dict.get('latitude', '')
+    lng_raw = park_dict.get('longitude', '')
+
+    try:
+        if lat_raw not in (None, '') and lng_raw not in (None, ''):
+            return float(lat_raw), float(lng_raw)
+    except:
+        pass
+
+    # Fallback
+    latlong_raw = park_dict.get('latLong', '') or ''
+    match_lat = re.search(r"lat\s*:\s*([-0-9.]+)", latlong_raw)
+    match_lng = re.search(r"long\s*:\s*([-0-9.]+)", latlong_raw)
+
+    if match_lat and match_lng:
+        try:
+            return float(match_lat.group(1)), float(match_lng.group(1))
+        except:
+            return None, None
+
+    return None, None
 
 payload = {
     'api_key': my_key,
@@ -155,12 +180,12 @@ class Parks(FlaskForm):
     submit = SubmitField('Search')
 
 
-#main page: should dynamically react to a user's selecting of states? or a user's searching of states(implemented with form)??
 @app.route('/', methods=('GET', 'POST'))
 def index():
     form = StateSearch()
     stateText = ""
     parkList = []
+    parks_for_map = []
     global data
     if form.validate_on_submit():
     
@@ -172,11 +197,23 @@ def index():
         except:
             print('please try again')
 
-        for parks in data["data"]:
-            if (parks['states'] == statesWithAbbr[form.stateSearch.data]):
-                parkList.append(parks['fullName'])
+        selected_code = statesWithAbbr[form.stateSearch.data]
 
-    return render_template('main.html', form = form, parkList = parkList)
+        for parks in data["data"]:
+            # Some parks list multiple states like "CA,NV".
+            park_states = (parks.get('states') or '').split(',')
+            if selected_code in park_states:
+                parkList.append(parks.get('fullName', 'Unknown Park'))
+
+                lat, lng = extract_coords(parks)
+                if lat is not None and lng is not None:
+                    parks_for_map.append({
+                        'name': parks.get('fullName', 'Unknown Park'),
+                        'latitude': lat,
+                        'longitude': lng
+                    })
+
+    return render_template('main.html', form = form, parkList = parkList, parks_for_map = parks_for_map)
 
 #details page: should display details about a single facility/national park.
     #details: ammenities, fees/costs
